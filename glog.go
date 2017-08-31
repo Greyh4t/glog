@@ -65,62 +65,62 @@ func (self *Logger) SetLevel(level int) *Logger {
 	return self
 }
 
-func (self *Logger) doLog(level int, message string) {
+func (self *Logger) doLog(level int, v ...interface{}) {
 	if level < self.level {
 		return
 	}
 	self.l.SetPrefix(levelName[level] + " ")
-	self.l.Output(3, message)
+	self.l.Output(3, fmt.Sprintln(v...))
 }
 
-func (self *Logger) Debug(message string) {
-	self.doLog(LevelDebug, message)
+func (self *Logger) Debug(v ...interface{}) {
+	self.doLog(LevelDebug, v...)
 }
 
-func (self *Logger) Info(message string) {
-	self.doLog(LevelInfo, message)
+func (self *Logger) Info(v ...interface{}) {
+	self.doLog(LevelInfo, v...)
 }
 
-func (self *Logger) Warn(message string) {
-	self.doLog(LevelWarn, message)
+func (self *Logger) Warn(v ...interface{}) {
+	self.doLog(LevelWarn, v...)
 }
 
-func (self *Logger) Error(message string) {
-	self.doLog(LevelError, message)
+func (self *Logger) Error(v ...interface{}) {
+	self.doLog(LevelError, v...)
 }
 
-func (self *Logger) Panic(message string) {
-	self.doLog(LevelPanic, message)
-	panic(message)
+func (self *Logger) Panic(v ...interface{}) {
+	self.doLog(LevelPanic, v...)
+	panic(fmt.Sprintln(v...))
 }
 
-func (self *Logger) Fatal(message string) {
-	self.doLog(LevelFatal, message)
+func (self *Logger) Fatal(v ...interface{}) {
+	self.doLog(LevelFatal, v...)
 	os.Exit(1)
 }
 
-func (self *Logger) Debugf(formatStr string, args ...interface{}) {
-	self.doLog(LevelDebug, fmt.Sprintf(formatStr, args...))
+func (self *Logger) Debugf(format string, v ...interface{}) {
+	self.doLog(LevelDebug, fmt.Sprintf(format, v...))
 }
 
-func (self *Logger) Infof(formatStr string, args ...interface{}) {
-	self.doLog(LevelInfo, fmt.Sprintf(formatStr, args...))
+func (self *Logger) Infof(format string, v ...interface{}) {
+	self.doLog(LevelInfo, fmt.Sprintf(format, v...))
 }
 
-func (self *Logger) Warnf(formatStr string, args ...interface{}) {
-	self.doLog(LevelWarn, fmt.Sprintf(formatStr, args...))
+func (self *Logger) Warnf(format string, v ...interface{}) {
+	self.doLog(LevelWarn, fmt.Sprintf(format, v...))
 }
 
-func (self *Logger) Errorf(formatStr string, args ...interface{}) {
-	self.doLog(LevelError, fmt.Sprintf(formatStr, args...))
+func (self *Logger) Errorf(format string, v ...interface{}) {
+	self.doLog(LevelError, fmt.Sprintf(format, v...))
 }
 
-func (self *Logger) Panicf(formatStr string, args ...interface{}) {
-	self.doLog(LevelPanic, fmt.Sprintf(formatStr, args...))
-	panic(fmt.Sprintf(formatStr, args...))
+func (self *Logger) Panicf(format string, v ...interface{}) {
+	self.doLog(LevelPanic, fmt.Sprintf(format, v...))
+	panic(fmt.Sprintf(format, v...))
 }
 
-func (self *Logger) Fatalf(formatStr string, args ...interface{}) {
-	self.doLog(LevelFatal, fmt.Sprintf(formatStr, args...))
+func (self *Logger) Fatalf(format string, v ...interface{}) {
+	self.doLog(LevelFatal, fmt.Sprintf(format, v...))
 	os.Exit(1)
 }
