@@ -42,17 +42,9 @@ func New(w io.Writer) *Logger {
 	}
 }
 
-func NewWithTimeFormat(w io.Writer, timeFormat string) *Logger {
-	return &Logger{
-		l:  log.New(w, "", 0),
-		tf: timeFormat,
-	}
-}
-
 type Logger struct {
 	level int
 	l     *log.Logger
-	tf    string
 }
 
 func (self *Logger) SetFlags(flag int) *Logger {
