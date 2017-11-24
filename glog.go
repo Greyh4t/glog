@@ -61,8 +61,7 @@ func (self *Logger) doLog(level int, v ...interface{}) {
 	if level < self.level {
 		return
 	}
-	self.l.SetPrefix(levelName[level] + " ")
-	self.l.Output(3, fmt.Sprintln(v...))
+	self.l.Output(3, levelName[level]+" "+fmt.Sprintln(v...))
 }
 
 func (self *Logger) Debug(v ...interface{}) {
