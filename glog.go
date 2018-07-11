@@ -57,11 +57,20 @@ func (self *Logger) SetLevel(level int) *Logger {
 	return self
 }
 
-func (self *Logger) doLog(level int, v ...interface{}) {
+func (self *Logger) doLog(level int, v ...interface{}) bool {
 	if level < self.level {
-		return
+		return false
 	}
 	self.l.Output(3, levelName[level]+" "+fmt.Sprintln(v...))
+	return true
+}
+
+func (self *Logger) doLogf(level int, format string, v ...interface{}) bool {
+	if level < self.level {
+		return false
+	}
+	self.l.Output(3, levelName[level]+" "+fmt.Sprintln(fmt.Sprintf(format, v...)))
+	return true
 }
 
 func (self *Logger) Debug(v ...interface{}) {
@@ -81,37 +90,41 @@ func (self *Logger) Error(v ...interface{}) {
 }
 
 func (self *Logger) Panic(v ...interface{}) {
-	self.doLog(LevelPanic, v...)
-	panic(fmt.Sprintln(v...))
+	if self.doLog(LevelPanic, v...) {
+		panic(fmt.Sprintln(v...))
+	}
 }
 
 func (self *Logger) Fatal(v ...interface{}) {
-	self.doLog(LevelFatal, v...)
-	os.Exit(1)
+	if self.doLog(LevelFatal, v...) {
+		os.Exit(1)
+	}
 }
 
 func (self *Logger) Debugf(format string, v ...interface{}) {
-	self.doLog(LevelDebug, fmt.Sprintf(format, v...))
+	self.doLogf(LevelDebug, format, v...)
 }
 
 func (self *Logger) Infof(format string, v ...interface{}) {
-	self.doLog(LevelInfo, fmt.Sprintf(format, v...))
+	self.doLogf(LevelInfo, format, v...)
 }
 
 func (self *Logger) Warnf(format string, v ...interface{}) {
-	self.doLog(LevelWarn, fmt.Sprintf(format, v...))
+	self.doLogf(LevelWarn, format, v...)
 }
 
 func (self *Logger) Errorf(format string, v ...interface{}) {
-	self.doLog(LevelError, fmt.Sprintf(format, v...))
+	self.doLogf(LevelError, format, v...)
 }
 
 func (self *Logger) Panicf(format string, v ...interface{}) {
-	self.doLog(LevelPanic, fmt.Sprintf(format, v...))
-	panic(fmt.Sprintf(format, v...))
+	if self.doLogf(LevelPanic, format, v...) {
+		panic(fmt.Sprintf(format, v...))
+	}
 }
 
 func (self *Logger) Fatalf(format string, v ...interface{}) {
-	self.doLog(LevelFatal, fmt.Sprintf(format, v...))
-	os.Exit(1)
+	if self.doLogf(LevelFatal, format, v...) {
+		os.Exit(1)
+	}
 }
