@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	LevelDebug = iota
+	LevelDebug Level = iota
 	LevelInfo
 	LevelWarn
 	LevelError
@@ -27,13 +27,44 @@ const (
 	LstdFlags     = Ldate | Ltime // initial values for the standard logger
 )
 
-var levelName = []string{
-	"DEBU",
-	"INFO",
-	"WARN",
-	"ERRO",
-	"PANI",
-	"FATA",
+type Level int
+
+func (l Level) String() string {
+	switch l {
+	case LevelDebug:
+		return "DEBU"
+	case LevelInfo:
+		return "INFO"
+	case LevelWarn:
+		return "WARN"
+	case LevelError:
+		return "ERRO"
+	case LevelPanic:
+		return "PANI"
+	case LevelFatal:
+		return "FATA"
+	}
+
+	return ""
+}
+
+func ToLevel(levelStr string) Level {
+	switch levelStr {
+	case "DEBU":
+		return LevelDebug
+	case "INFO":
+		return LevelInfo
+	case "WARN":
+		return LevelWarn
+	case "ERRO":
+		return LevelError
+	case "PANI":
+		return LevelPanic
+	case "FATA":
+		return LevelFatal
+	}
+
+	return LevelNone
 }
 
 func New(w io.Writer) *Logger {
@@ -43,7 +74,7 @@ func New(w io.Writer) *Logger {
 }
 
 type Logger struct {
-	level int
+	level Level
 	l     *log.Logger
 }
 
@@ -52,24 +83,24 @@ func (self *Logger) SetFlags(flag int) *Logger {
 	return self
 }
 
-func (self *Logger) SetLevel(level int) *Logger {
+func (self *Logger) SetLevel(level Level) *Logger {
 	self.level = level
 	return self
 }
 
-func (self *Logger) doLog(level int, v ...interface{}) bool {
+func (self *Logger) doLog(level Level, v ...interface{}) bool {
 	if level < self.level {
 		return false
 	}
-	self.l.Output(3, levelName[level]+" "+fmt.Sprintln(v...))
+	self.l.Output(3, level.String()+" "+fmt.Sprintln(v...))
 	return true
 }
 
-func (self *Logger) doLogf(level int, format string, v ...interface{}) bool {
+func (self *Logger) doLogf(level Level, format string, v ...interface{}) bool {
 	if level < self.level {
 		return false
 	}
-	self.l.Output(3, levelName[level]+" "+fmt.Sprintln(fmt.Sprintf(format, v...)))
+	self.l.Output(3, level.String()+" "+fmt.Sprintln(fmt.Sprintf(format, v...)))
 	return true
 }
 
