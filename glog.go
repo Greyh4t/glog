@@ -1,6 +1,7 @@
 package glog
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -27,44 +28,53 @@ const (
 	LstdFlags     = Ldate | Ltime // initial values for the standard logger
 )
 
+var ErrUnknownLevel  = errors.New("unknwon level, level must be one of debug, info, warn, error, panic, fatal")
+
 type Level int
 
 func (l Level) String() string {
 	switch l {
 	case LevelDebug:
-		return "DEBU"
+		return "debug"
 	case LevelInfo:
-		return "INFO"
+		return "info"
 	case LevelWarn:
-		return "WARN"
+		return "warn"
 	case LevelError:
-		return "ERRO"
+		return "error"
 	case LevelPanic:
-		return "PANI"
+		return "panic"
 	case LevelFatal:
-		return "FATA"
+		return "fatal"
 	}
 
 	return ""
 }
 
-func ToLevel(levelStr string) Level {
+func ToLevel(levelStr string) (Level, error) {
 	switch levelStr {
-	case "DEBU":
-		return LevelDebug
-	case "INFO":
-		return LevelInfo
-	case "WARN":
-		return LevelWarn
-	case "ERRO":
-		return LevelError
-	case "PANI":
-		return LevelPanic
-	case "FATA":
-		return LevelFatal
+	case "debug":
+		return LevelDebug, nil
+	case "info":
+		return LevelInfo, nil
+	case "warn":
+		return LevelWarn, nil
+	case "error":
+		return LevelError, nil
+	case "panic":
+		return LevelPanic, nil
+	case "fatal":
+		return LevelFatal, nil
 	}
 
-	return LevelNone
+	return LevelNone, ErrUnknownLevel
+}
+
+func Must(level Level, err error) Level {
+	if err != nil {
+		panic(err)
+	}
+	return level
 }
 
 func New(w io.Writer) *Logger {
